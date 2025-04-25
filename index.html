@@ -12,11 +12,7 @@
             text-align: center;
         }
 
-        h1 { 
-            color: #2c3e50; 
-            transition: color 0.3s; 
-            font-size: 32px;
-        }
+        h1 { color: #2c3e50; transition: color 0.3s; }
 
         .earthquake {
             margin: 10px 0;
@@ -33,16 +29,16 @@
         .earthquake:hover { transform: scale(1.01); }
 
         button, label, select {
-            padding: 12px 25px;
+            padding: 12px 24px;
+            font-size: 16px;
             background: linear-gradient(45deg, #3498db, #2980b9);
             color: white;
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            margin: 6px;
+            margin: 5px;
             display: inline-block;
             transition: background 0.3s;
-            font-size: 16px;
         }
 
         button:hover { background: linear-gradient(45deg, #2980b9, #3498db); }
@@ -64,44 +60,22 @@
         }
 
         .modal {
-            display: none; 
-            position: fixed; 
-            top: 50%; left: 50%;
+            display: none; position: fixed; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: white; 
-            padding: 30px; 
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
-            z-index: 1000;
-            max-width: 500px; 
-            width: 90%;
-            text-align: center;
+            background: white; padding: 25px; border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000;
+            max-width: 90%; text-align: center; font-size: 16px;
         }
 
         .dark-mode .modal { background: #3b4a5a; color: #ecf0f1; }
 
-        a { text-decoration: none; color: inherit; }
+        a { text-decoration: none; color: #2980b9; }
 
-        #infoBtn {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 1001;
-            padding: 12px 20px;
-            font-size: 16px;
-        }
-
+        /* Responsive Tasarım */
         @media (max-width: 600px) {
-            button, label, select { 
-                width: 95%; 
-                font-size: 18px; 
-                padding: 14px 30px; 
-            }
-            h1 { font-size: 24px; }
-            #infoBtn {
-                font-size: 18px;
-                padding: 14px 24px;
-            }
+            button, label, select { width: 95%; font-size: 14px; }
+            .earthquake { font-size: 14px; padding: 10px; }
+            h1 { font-size: 22px; }
         }
     </style>
 </head>
@@ -124,11 +98,10 @@
         <button onclick="scrollToTop()" id="topBtn">⬆️ Başa Dön</button>
     </div>
 
-    <!-- Detay Modal -->
     <div id="modal" class="modal"></div>
 
-    <!-- Bilgi Butonu -->
-    <button onclick="showInfo()" id="infoBtn">ℹ️ Bilgi</button>
+    <!-- Sağ Üst Bilgi Butonu -->
+    <button onclick="showInfo()" style="position:fixed; top:10px; right:10px; z-index:1001;">ℹ️ Bilgi</button>
 
     <!-- Bilgilendirme Popup -->
     <div id="infoModal" class="modal">
@@ -140,8 +113,9 @@
         <button onclick="closeInfo()">Kapat</button>
     </div>
 
+    <!-- Sayfa Altı Uyarı -->
     <footer style="margin-top:30px; font-size:12px; color:gray; text-align:center;">
-        ⚠️ Bu web sitesi hiçbir ticari amaç gütmeden hazırlanmıştır. Veriler Kandilli Rasathanesi kaynaklıdır. Resmi bir kurum değildir ve sorumluluk kabul etmez.
+        ⚠️ Bu web sitesi hiçbir ticari amaç gütmeden hazırlanmıştır. Gösterilen veriler Kandilli Rasathanesi kaynaklıdır ve doğrulukları garanti edilmez. Resmi bir kurum değildir ve herhangi bir sorumluluk kabul etmez.
     </footer>
 
     <audio id="alertSound">
@@ -162,6 +136,8 @@
                 .then(data => {
                     const listDiv = document.getElementById('earthquake-list');
                     listDiv.innerHTML = "";
+
+                    favCities = []; // Her yüklemede temizle
 
                     data.result.slice(0, 100).forEach(eq => {
                         if (filterEnabled && eq.mag < 4) return;
@@ -207,13 +183,14 @@
 
         function showModal(eq) {
             const modal = document.getElementById('modal');
+            const coords = eq.geojson.coordinates;
             modal.style.display = 'block';
             modal.innerHTML = `
-                <h2>${eq.title}</h2>
+                <h3>${eq.title}</h3>
                 <p><strong>Tarih:</strong> ${eq.date}</p>
                 <p><strong>Büyüklük:</strong> ${eq.mag} ML</p>
                 <p><strong>Derinlik:</strong> ${eq.depth} km</p>
-                <p><a href="https://www.google.com/search?q=${encodeURIComponent(eq.title)}" target="_blank">🔎 Google'da Ara</a></p>
+                <p><a href="https://www.google.com/maps?q=${coords[1]},${coords[0]}" target="_blank">📍 Haritada Gör</a></p>
                 <button onclick="closeModal()">Kapat</button>
             `;
         }
