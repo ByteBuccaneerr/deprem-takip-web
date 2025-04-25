@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Deprem Takip</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; padding: 20px; transition: background 0.3s, color 0.3s; }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        h1 { color: #2c3e50; transition: color 0.3s; }
+
+        .earthquake {
+            margin: 10px 0;
+            padding: 15px;
+            border-left: 5px solid #e74c3c;
+            border-radius: 6px;
+            background: #fff;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background 0.3s, color 0.3s;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .earthquake:hover { transform: scale(1.01); }
+
+        button, label, select {
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+
+        button:hover { background: linear-gradient(45deg, #2980b9, #3498db); }
+
+        .dark-mode { background: #2c3e50; color: #ecf0f1; }
+        .dark-mode h1 { color: #ecf0f1; }
+        .dark-mode .earthquake { background: #3b4a5a; color: #ecf0f1; }
+        .dark-mode button, .dark-mode label, .dark-mode select {
+            background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+            color: #2c3e50;
+        }
+
+        #topBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: none;
+            z-index: 99;
+        }
+
+        .modal {
+            display: none; position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: white; padding: 20px; border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000;
+            max-width: 400px; text-align: center;
+        }
+
+        .dark-mode .modal { background: #3b4a5a; color: #ecf0f1; }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* Responsive Tasarım */
+        @media (max-width: 600px) {
+            button, label, select { width: 90%; text-align: center; }
+            .earthquake { font-size: 14px; padding: 10px; }
+            h1 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📢 Deprem Takip</h1>
+        <button onclick="loadData()">🔄 Yenile</button>
+        <button onclick="toggleDarkMode()">🌙 Tema</button>
+        <label><input type="checkbox" id="filterCheckbox" onchange="loadData()"> 4.0+ Göster</label>
+        <select id="dateFilter" onchange="loadData()">
+            <option value="all">Tüm Zamanlar</option>
+            <option value="24">Son 24 Saat</option>
+            <option value="72">Son 3 Gün</option>
+        </select>
+        <select id="favFilter" onchange="loadData()">
+            <option value="all">Tüm Bölgeler</option>
+        </select>
+
+        <div id="earthquake-list">Veriler yükleniyor...</div>
+        <button onclick="scrollToTop()" id="topBtn">⬆️ Başa Dön</button>
+    </div>
+
+
+    <div id="modal" class="modal"></div>
+
+
+    <!-- Sağ Üst Bilgi Butonu -->
+    <button onclick="showInfo()" style="position:fixed; top:10px; right:10px; z-index:1001;">ℹ️ Bilgi</button>
+
+    <!-- Bilgilendirme Popup -->
+    <div id="infoModal" class="modal">
+        <p><strong>⚠️ Bilgilendirme:</strong><br><br>
+        Bu web sitesi, <b>hiçbir ticari amaç gütmeden</b>, sadece güncel depremlere kolay erişim sağlamak amacıyla hazırlanmıştır.<br><br>
+        Gösterilen veriler <b>Kandilli Rasathanesi</b> kaynaklıdır ve doğrulukları garanti edilmez.<br><br>
+        Web sitesi, resmi bir kurum değildir ve paylaşılan bilgiler nedeniyle <b>herhangi bir sorumluluk kabul etmez</b>.<br><br>
+        Güncel ve kesin bilgiler için yetkili kurumların resmi açıklamalarını takip ediniz.</p>
+        <button onclick="closeInfo()">Kapat</button>
+    </div>
+
+    <!-- Sayfa Altı Uyarı -->
+    <footer style="margin-top:30px; font-size:12px; color:gray; text-align:center;">
+        ⚠️ Bu web sitesi hiçbir ticari amaç gütmeden hazırlanmıştır. Gösterilen veriler Kandilli Rasathanesi kaynaklıdır ve doğrulukları garanti edilmez. Resmi bir kurum değildir ve herhangi bir sorumluluk kabul etmez. Güncel bilgiler için yetkili kurumların açıklamalarını takip ediniz.
+    </footer>
+
+    <audio id="alertSound">
+        <source src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" type="audio/ogg">
+    </audio>
+
+    <script>
+        let favCities = [];
+
+        function loadData() {
+            const apiUrl = "https://api.orhanaydogdu.com.tr/deprem/kandilli/live";
+            const filterEnabled = document.getElementById('filterCheckbox').checked;
+            const dateFilter = document.getElementById('dateFilter').value;
+            const favFilter = document.getElementById('favFilter').value;
+
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(data => {
+                    const listDiv = document.getElementById('earthquake-list');
+                    listDiv.innerHTML = "";
+
+                    data.result.slice(0, 100).forEach(eq => {
+                        if (filterEnabled && eq.mag < 4) return;
+
+                        const eqDate = new Date(eq.date);
+                        const now = new Date();
+                        const diffHours = (now - eqDate) / 36e5;
+                        if (dateFilter !== "all" && diffHours > parseInt(dateFilter)) return;
+
+                        if (favFilter !== "all" && !eq.title.includes(favFilter)) return;
+
+                        let color = '#2ecc71';
+                        if (eq.mag >= 4) color = '#e67e22';
+                        if (eq.mag >= 5) color = '#e74c3c';
+
+                        const eqDiv = document.createElement('div');
+                        eqDiv.className = 'earthquake';
+                        eqDiv.style.borderLeft = `5px solid ${color}`;
+                        eqDiv.innerHTML = `<strong>${eq.title}</strong><br>📅 ${eq.date} | 🌋 ${eq.mag} ML | 📏 ${eq.depth} km`;
+                        eqDiv.onclick = () => showModal(eq);
+                        listDiv.appendChild(eqDiv);
+
+                        if (eq.mag >= 5) document.getElementById('alertSound').play();
+
+                        favCities.push(eq.title.split(' ')[0]);
+                    });
+
+                    updateFavFilter();
+                });
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        window.onscroll = function() {
+            document.getElementById('topBtn').style.display = (window.scrollY > 200) ? 'block' : 'none';
+        };
+
+        function showModal(eq) {
+            const modal = document.getElementById('modal');
+            modal.style.display = 'block';
+            modal.innerHTML = `
+                <h3>${eq.title}</h3>
+                <p><strong>Tarih:</strong> ${eq.date}</p>
+                <p><strong>Büyüklük:</strong> ${eq.mag} ML</p>
+                <p><strong>Derinlik:</strong> ${eq.depth} km</p>
+                <p><a href="https://www.google.com/search?q=${encodeURIComponent(eq.title)}" target="_blank">Google'da Ara</a></p>
+                <button onclick="closeModal()">Kapat</button>
+            `;
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+        }
+
+        function updateFavFilter() {
+            const select = document.getElementById('favFilter');
+            const uniqueCities = [...new Set(favCities)];
+            select.innerHTML = '<option value="all">Tüm Bölgeler</option>';
+            uniqueCities.forEach(city => {
+                select.innerHTML += `<option value="${city}">${city}</option>`;
+            });
+        }
+
+        function showInfo() {
+            document.getElementById('infoModal').style.display = 'block';
+        }
+
+        function closeInfo() {
+            document.getElementById('infoModal').style.display = 'none';
+        }
+
+        window.onload = function() {
+            showInfo();
+            loadData();
+            setInterval(loadData, 5000);
+        };
+    </script>
+</body>
+</html>
