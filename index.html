@@ -12,7 +12,11 @@
             text-align: center;
         }
 
-        h1 { color: #2c3e50; transition: color 0.3s; }
+        h1 { 
+            color: #2c3e50; 
+            transition: color 0.3s; 
+            font-size: 32px;
+        }
 
         .earthquake {
             margin: 10px 0;
@@ -29,15 +33,16 @@
         .earthquake:hover { transform: scale(1.01); }
 
         button, label, select {
-            padding: 10px 20px;
+            padding: 12px 25px;
             background: linear-gradient(45deg, #3498db, #2980b9);
             color: white;
             border: none;
             border-radius: 25px;
             cursor: pointer;
-            margin: 5px;
+            margin: 6px;
             display: inline-block;
             transition: background 0.3s;
+            font-size: 16px;
         }
 
         button:hover { background: linear-gradient(45deg, #2980b9, #3498db); }
@@ -59,22 +64,44 @@
         }
 
         .modal {
-            display: none; position: fixed; top: 50%; left: 50%;
+            display: none; 
+            position: fixed; 
+            top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            background: white; padding: 20px; border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000;
-            max-width: 400px; text-align: center;
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+            z-index: 1000;
+            max-width: 500px; 
+            width: 90%;
+            text-align: center;
         }
 
         .dark-mode .modal { background: #3b4a5a; color: #ecf0f1; }
 
         a { text-decoration: none; color: inherit; }
 
-        /* Responsive Tasarım */
+        #infoBtn {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1001;
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+
         @media (max-width: 600px) {
-            button, label, select { width: 90%; text-align: center; }
-            .earthquake { font-size: 14px; padding: 10px; }
-            h1 { font-size: 20px; }
+            button, label, select { 
+                width: 95%; 
+                font-size: 18px; 
+                padding: 14px 30px; 
+            }
+            h1 { font-size: 24px; }
+            #infoBtn {
+                font-size: 18px;
+                padding: 14px 24px;
+            }
         }
     </style>
 </head>
@@ -97,26 +124,24 @@
         <button onclick="scrollToTop()" id="topBtn">⬆️ Başa Dön</button>
     </div>
 
-
+    <!-- Detay Modal -->
     <div id="modal" class="modal"></div>
 
-
-    <!-- Sağ Üst Bilgi Butonu -->
-    <button onclick="showInfo()" style="position:fixed; top:10px; right:10px; z-index:1001;">ℹ️ Bilgi</button>
+    <!-- Bilgi Butonu -->
+    <button onclick="showInfo()" id="infoBtn">ℹ️ Bilgi</button>
 
     <!-- Bilgilendirme Popup -->
     <div id="infoModal" class="modal">
         <p><strong>⚠️ Bilgilendirme:</strong><br><br>
         Bu web sitesi, <b>hiçbir ticari amaç gütmeden</b>, sadece güncel depremlere kolay erişim sağlamak amacıyla hazırlanmıştır.<br><br>
         Gösterilen veriler <b>Kandilli Rasathanesi</b> kaynaklıdır ve doğrulukları garanti edilmez.<br><br>
-        Web sitesi, resmi bir kurum değildir ve paylaşılan bilgiler nedeniyle <b>herhangi bir sorumluluk kabul etmez</b>.<br><br>
-        Güncel ve kesin bilgiler için yetkili kurumların resmi açıklamalarını takip ediniz.</p>
+        Web sitesi resmi bir kurum değildir ve <b>herhangi bir sorumluluk kabul etmez</b>.<br><br>
+        Güncel bilgiler için yetkili kurumların açıklamalarını takip ediniz.</p>
         <button onclick="closeInfo()">Kapat</button>
     </div>
 
-    <!-- Sayfa Altı Uyarı -->
     <footer style="margin-top:30px; font-size:12px; color:gray; text-align:center;">
-        ⚠️ Bu web sitesi hiçbir ticari amaç gütmeden hazırlanmıştır. Gösterilen veriler Kandilli Rasathanesi kaynaklıdır ve doğrulukları garanti edilmez. Resmi bir kurum değildir ve herhangi bir sorumluluk kabul etmez. Güncel bilgiler için yetkili kurumların açıklamalarını takip ediniz.
+        ⚠️ Bu web sitesi hiçbir ticari amaç gütmeden hazırlanmıştır. Veriler Kandilli Rasathanesi kaynaklıdır. Resmi bir kurum değildir ve sorumluluk kabul etmez.
     </footer>
 
     <audio id="alertSound">
@@ -184,11 +209,11 @@
             const modal = document.getElementById('modal');
             modal.style.display = 'block';
             modal.innerHTML = `
-                <h3>${eq.title}</h3>
+                <h2>${eq.title}</h2>
                 <p><strong>Tarih:</strong> ${eq.date}</p>
                 <p><strong>Büyüklük:</strong> ${eq.mag} ML</p>
                 <p><strong>Derinlik:</strong> ${eq.depth} km</p>
-                <p><a href="https://www.google.com/search?q=${encodeURIComponent(eq.title)}" target="_blank">Google'da Ara</a></p>
+                <p><a href="https://www.google.com/search?q=${encodeURIComponent(eq.title)}" target="_blank">🔎 Google'da Ara</a></p>
                 <button onclick="closeModal()">Kapat</button>
             `;
         }
