@@ -5,14 +5,12 @@ self.addEventListener('install', function(event) {
                 '/',
                 '/index.html',
                 '/manifest.json',
-                '/service-worker.js',
-                'https://unpkg.com/leaflet/dist/leaflet.css',
-                'https://unpkg.com/leaflet/dist/leaflet.js',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css'
+                '/service-worker.js'
             ]);
         })
     );
 });
+
 
 self.addEventListener('fetch', function(event) {
     event.respondWith(
