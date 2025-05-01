@@ -2,14 +2,13 @@ self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open('v1').then(function(cache) {
             return cache.addAll([
-                '/index.html',
-                '/manifest.json',
-                '/service-worker.js'
+                '/deprem-takip-web/index.html',
+                '/deprem-takip-web/manifest.json',
+                '/deprem-takip-web/service-worker.js'
             ]);
         })
     );
 });
-
 
 self.addEventListener('fetch', function(event) {
     event.respondWith(
