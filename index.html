@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Son Depremler</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link rel="manifest" href="manifest.json">
     <script>
         if ('serviceWorker' in navigator) {
@@ -10,7 +11,6 @@
             .then(function() { console.log("✅ Service Worker Registered"); });
         }
     </script>
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
@@ -33,37 +33,37 @@
             transition: color 0.5s;
         }
         .btn, select, label {
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 12px 20px;
+            margin: 8px;
             border: none;
             border-radius: 30px;
             background: #3498db;
             color: white;
-            font-size: 15px;
+            font-size: 16px;
             cursor: pointer;
-            transition: transform 0.2s, background 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            transition: transform 0.2s, background 0.3s;
         }
         .btn:hover {
             background: #2980b9;
             transform: scale(1.05);
         }
         select {
-            background: #2980b9;
             appearance: none;
         }
         .earthquake {
             background: white;
-            margin: 10px 0;
-            padding: 15px;
+            margin: 12px 0;
+            padding: 18px;
             border-left: 5px solid #27ae60;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             transition: transform 0.2s;
             cursor: pointer;
             text-align: left;
+            font-size: 16px;
         }
         .earthquake:hover {
             transform: translateY(-3px);
@@ -78,14 +78,14 @@
         }
         .dark-mode .btn, .dark-mode select, .dark-mode label {
             background: #7f8c8d;
-            color: #2c3e50;
+            color: #ecf0f1;
         }
         .dark-mode h1.site-title {
             color: #ecf0f1;
         }
         .dark-mode #topBtn {
             background: #7f8c8d;
-             color: #2c3e50;
+            color: #ecf0f1;
         }
         .modal {
             display: none;
@@ -94,43 +94,71 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: white;
-            padding: 30px;
+            padding: 25px 20px;
             border-radius: 12px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             z-index: 1000;
-            max-width: 95%;
+            max-width: 500px;
+            width: 90%;
+            font-size: 16px;
+        }
+        .modal .btn-close {
+            margin-top: 15px;
+            width: 100%;
+            padding: 12px 0;
+            border-radius: 30px;
+            background: #3498db;
+            color: white;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .modal .btn-close:hover {
+            background: #2980b9;
         }
         .dark-mode .modal {
             background: #3b4a5a;
             color: #ecf0f1;
         }
+        .dark-mode .btn-close {
+            background: #7f8c8d;
+            color: #ecf0f1;
+        }
         #topBtn {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 25px;
+            right: 25px;
             display: none;
+            background: #3498db;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 20px;
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            transition: background 0.3s;
+        }
+        #topBtn:hover {
             background: #2980b9;
         }
         #map {
             width: 100%;
-            height: 300px;
+            height: 380px;
             margin-top: 15px;
             border-radius: 10px;
         }
         footer {
             margin-top: 30px;
-            font-size: 12px;
+            font-size: 13px;
             color: gray;
             text-align: center;
         }
-        a {
-            color: #2980b9;
-            text-decoration: none;
-        }
         @media (max-width: 600px) {
             .btn, select, label {
-                width: 90%;
-                font-size: 14px;
+                width: 95%;
+                font-size: 15px;
                 justify-content: center;
             }
         }
@@ -151,11 +179,13 @@
             <option value="all">Tüm Bölgeler</option>
         </select>
         <div id="earthquake-list">Veriler yükleniyor...</div>
-        <button class="btn" onclick="scrollToTop()" id="topBtn"><i class="fas fa-arrow-up"></i> Başa Dön</button>
+        <button id="topBtn" onclick="scrollToTop()"><i class="fas fa-arrow-up"></i></button>
     </div>
 
     <div id="modal" class="modal"></div>
-    <button class="btn" onclick="showInfo()" style="position:fixed; top:10px; right:10px; z-index:1001;"><i class="fas fa-info-circle"></i> Bilgi</button>
+    <button class="btn" onclick="showInfo()" style="position:fixed; top:10px; right:10px; z-index:1001;">
+        <i class="fas fa-info-circle"></i> Bilgi
+    </button>
 
     <div id="infoModal" class="modal">
         <p><strong>⚠️ Bilgilendirme:</strong><br><br>
@@ -163,7 +193,7 @@
         Gösterilen veriler <b>Kandilli Rasathanesi</b> kaynaklıdır ve doğrulukları garanti edilmez.<br><br>
         Web sitesi resmi bir kurum değildir ve <b>herhangi bir sorumluluk kabul etmez</b>.<br><br>
         Güncel bilgiler için yetkili kurumların açıklamalarını takip ediniz.</p>
-        <button class="btn" onclick="closeInfo()">Kapat</button>
+        <button class="btn-close" onclick="closeInfo()">Kapat</button>
     </div>
 
     <footer>
@@ -226,13 +256,15 @@
                 <p><strong>Büyüklük:</strong> ${eq.mag} ML</p>
                 <p><strong>Derinlik:</strong> ${eq.depth} km</p>
                 <div id="map"></div>
-                <button class="btn" onclick="closeModal()">Kapat</button>
+                <button class="btn-close" onclick="closeModal()">Kapat</button>
             `;
             const coords = eq.geojson.coordinates;
             const map = L.map('map').setView([coords[1], coords[0]], 7);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
             L.marker([coords[1], coords[0]]).addTo(map).bindPopup(`${eq.title}<br>Büyüklük: ${eq.mag}`).openPopup();
-            L.circle([coords[1], coords[0]], { color: 'red', fillColor: '#f03', fillOpacity: 0.3, radius: eq.mag * 10000 }).addTo(map);
+            L.circle([coords[1], coords[0]], {
+                color: 'red', fillColor: '#f03', fillOpacity: 0.3, radius: eq.mag * 10000
+            }).addTo(map);
         }
 
         function toggleDarkMode() {
@@ -265,14 +297,13 @@
         }
 
         window.onscroll = function() {
-    const btn = document.getElementById('topBtn');
-    if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
-        btn.style.display = "block";
-    } else {
-        btn.style.display = "none";
-    }
-};
-
+            const btn = document.getElementById('topBtn');
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                btn.style.display = "flex";
+            } else {
+                btn.style.display = "none";
+            }
+        };
 
         window.onload = function() {
             showInfo();
