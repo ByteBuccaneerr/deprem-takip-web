@@ -22,6 +22,8 @@ const totalCount = document.getElementById('totalCount');
 const strongestMag = document.getElementById('strongestMag');
 const averageDepth = document.getElementById('averageDepth');
 const alertSound = document.getElementById('alertSound');
+const disclaimerModal = document.getElementById('disclaimerModal');
+const closeDisclaimerBtn = document.getElementById('closeDisclaimerBtn');
 
 // Global variables
 let earthquakesData = [];
@@ -35,6 +37,12 @@ function init() {
     setupEventListeners();
     checkServiceWorker();
     loadThemePreference();
+    
+    // Show disclaimer on first visit
+    if (!localStorage.getItem('disclaimerShown')) {
+        disclaimerModal.classList.add('show');
+        localStorage.setItem('disclaimerShown', 'true');
+    }
 }
 
 // Fetch earthquake data
@@ -327,7 +335,7 @@ function setupEventListeners() {
     infoBtn.addEventListener('click', () => {
         showNotification(
             'Deprem Bilgi Uygulaması',
-            'Veriler Kandilli Rasathanesi tarafından sağlanmaktadır.'
+            'Bu uygulama resmi bir kurum değildir. Veriler Kandilli Rasathanesi tarafından sağlanmaktadır. Hiçbir ticari amaç güdülmemektedir.'
         );
     });
     
@@ -351,6 +359,11 @@ function setupEventListeners() {
         if (e.target === earthquakeModal) {
             earthquakeModal.classList.remove('show');
         }
+    });
+    
+    // Close disclaimer button
+    closeDisclaimerBtn.addEventListener('click', () => {
+        disclaimerModal.classList.remove('show');
     });
     
     // Show/hide scroll to top button based on scroll position
