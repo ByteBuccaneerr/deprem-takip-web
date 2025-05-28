@@ -46,7 +46,7 @@ body {
 
 .site-title {
     color: var(--primary-color);
-    font-size: 2.2rem;
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
     margin: 0;
     display: flex;
     align-items: center;
@@ -101,6 +101,7 @@ body {
     flex-wrap: wrap;
     gap: 10px;
     align-items: center;
+    width: 100%;
 }
 
 .filter-label {
@@ -112,6 +113,7 @@ body {
     background-color: var(--light-card);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
+    white-space: nowrap;
 }
 
 .form-select {
@@ -120,6 +122,8 @@ body {
     border-radius: var(--border-radius);
     background-color: var(--light-card);
     cursor: pointer;
+    flex: 1;
+    min-width: 120px;
 }
 
 .loading {
@@ -152,7 +156,7 @@ body {
 
 .earthquake-card {
     background-color: var(--light-card);
-    padding: 20px;
+    padding: 15px;
     border-left: 5px solid var(--success-color);
     border-radius: var(--border-radius);
     box-shadow: var(--shadow);
@@ -170,11 +174,15 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .eq-header h3 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     margin: 0;
+    flex: 1;
+    min-width: 200px;
 }
 
 .magnitude-badge {
@@ -183,10 +191,13 @@ body {
     color: white;
     font-weight: bold;
     font-size: 0.9rem;
+    min-width: 50px;
+    text-align: center;
 }
 
 .eq-details {
     display: flex;
+    flex-wrap: wrap;
     gap: 15px;
     color: #666;
     font-size: 0.9rem;
@@ -240,6 +251,7 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: var(--transition);
+    padding: 20px;
 }
 
 .modal.show {
@@ -251,11 +263,20 @@ body {
     background-color: var(--light-card);
     padding: 25px;
     border-radius: var(--border-radius);
-    width: 90%;
+    width: 100%;
     max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
     position: relative;
+}
+
+.modal-body {
+    margin: 20px 0;
+    line-height: 1.7;
+}
+
+.modal-body p {
+    margin-bottom: 15px;
 }
 
 .modal-map {
@@ -329,6 +350,8 @@ body {
     z-index: 1001;
     opacity: 0;
     transition: var(--transition);
+    max-width: 90%;
+    text-align: center;
 }
 
 .notification.show {
@@ -376,6 +399,10 @@ body.dark-mode {
     color: var(--dark-text);
 }
 
+.dark-mode .modal-body {
+    color: var(--dark-text);
+}
+
 /* Responsive styles */
 @media (max-width: 768px) {
     .header {
@@ -407,5 +434,13 @@ body.dark-mode {
         height: 40px;
         bottom: 20px;
         right: 20px;
+    }
+    
+    .eq-header h3 {
+        min-width: 100%;
+    }
+    
+    .magnitude-badge {
+        margin-left: auto;
     }
 }
