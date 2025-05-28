@@ -41,6 +41,7 @@ function init() {
     // Show disclaimer on first visit
     if (!localStorage.getItem('disclaimerShown')) {
         disclaimerModal.classList.add('show');
+        document.body.style.overflow = 'hidden';
         localStorage.setItem('disclaimerShown', 'true');
     }
 }
@@ -364,6 +365,7 @@ function setupEventListeners() {
     // Close disclaimer button
     closeDisclaimerBtn.addEventListener('click', () => {
         disclaimerModal.classList.remove('show');
+        document.body.style.overflow = 'auto';
     });
     
     // Show/hide scroll to top button based on scroll position
