@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Türkiye'deki son depremleri anlık takip edin">
+    <title>Son Depremler | Anlık Takip</title>
+    <link rel="icon" href="assets/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="site-title"><i class="fas fa-wave-square"></i> Son Depremler</h1>
+            <div class="header-actions">
+                <button id="themeToggle" class="btn btn-icon" aria-label="Tema değiştir">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button id="infoBtn" class="btn btn-icon" aria-label="Bilgi">
+                    <i class="fas fa-info-circle"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="controls">
+            <button id="refreshBtn" class="btn btn-primary">
+                <i class="fas fa-sync-alt"></i> Yenile
+            </button>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <input type="checkbox" id="filterCheckbox"> 4.0+ Göster
+                </label>
+                <select id="dateFilter" class="form-select">
+                    <option value="all">Tüm Zamanlar</option>
+                    <option value="24">Son 24 Saat</option>
+                    <option value="72">Son 3 Gün</option>
+                </select>
+                <select id="locationFilter" class="form-select">
+                    <option value="all">Tüm Bölgeler</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="loadingIndicator" class="loading">
+            <div class="spinner"></div>
+            <p>Veriler yükleniyor...</p>
+        </div>
+
+        <div id="earthquake-list" class="earthquake-list"></div>
+
+        <div id="statsContainer" class="stats-container hidden">
+            <h3>İstatistikler</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="totalCount">0</span>
+                    <span class="stat-label">Toplam Deprem</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="strongestMag">0</span>
+                    <span class="stat-label">En Büyük Deprem</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="averageDepth">0</span>
+                    <span class="stat-label">Ort. Derinlik (km)</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="scrollTopBtn" class="btn btn-scroll-top" aria-label="Yukarı çık">
+            <i class="fas fa-arrow-up"></i>
+        </button>
+    </div>
+
+    <div id="earthquakeModal" class="modal hidden">
+        <div class="modal-content">
+            <button id="closeModalBtn" class="btn btn-close" aria-label="Kapat">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 id="modalTitle"></h3>
+            <div class="modal-details">
+                <p><i class="fas fa-clock"></i> <span id="modalDate"></span></p>
+                <p><i class="fas fa-ruler-vertical"></i> <span id="modalDepth"></span></p>
+                <p><i class="fas fa-map-marker-alt"></i> <span id="modalLocation"></span></p>
+            </div>
+            <div id="modalMap" class="modal-map"></div>
+            <button id="shareBtn" class="btn btn-share">
+                <i class="fas fa-share-alt"></i> Paylaş
+            </button>
+        </div>
+    </div>
+
+    <div id="notification" class="notification hidden"></div>
+
+    <footer class="footer">
+        <p>Veriler Kandilli Rasathanesi ve Deprem Araştırma Enstitüsü tarafından sağlanmaktadır.</p>
+        <p class="disclaimer">⚠️ Bu uygulama resmi bir kurum değildir. Doğruluk için lütfen yetkili kaynakları kontrol edin.</p>
+    </footer>
+
+    <audio id="alertSound" preload="auto">
+        <source src="assets/sounds/alert.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/app.js" type="module"></script>
+</body>
+</html>
