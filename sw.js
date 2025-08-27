@@ -3,7 +3,11 @@ const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/css/styles.css',
-    '/js/app.js',
+    '/js/main.js',
+    '/js/api.js',
+    '/js/dom.js',
+    '/js/render.js',
+    '/js/utils.js',
     '/manifest.webmanifest',
     '/assets/favicon.ico',
     '/assets/icons/icon-192.png',
@@ -38,23 +42,19 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
     if (event.request.url.includes('api.orhanaydogdu.com.tr')) {
-        // API istekleri için network-first stratejisi
         event.respondWith(
             fetch(event.request)
                 .then((response) => {
-                    // API yanıtını cache'e koyma
                     const responseToCache = response.clone();
                     caches.open(CACHE_NAME)
                         .then((cache) => cache.put(event.request, responseToCache));
                     return response;
                 })
                 .catch(() => {
-                    // Network hatasında cache'den getir
                     return caches.match(event.request);
                 })
         );
     } else {
-        // Diğer istekler için cache-first stratejisi
         event.respondWith(
             caches.match(event.request)
                 .then((cachedResponse) => {
@@ -72,7 +72,7 @@ self.addEventListener('push', (event) => {
         badge: '/assets/icons/icon-192.png',
         vibrate: [200, 100, 200]
     };
-    
+
     event.waitUntil(
         self.registration.showNotification(data.title, options)
     );
